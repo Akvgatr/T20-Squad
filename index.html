@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T20 2021 World Cup Analytics Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1D1D2E 0%, #2C4C4C 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2C4C4C 0%, #1D1D2E 100%);
+            padding: 40px 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            color: #D0CF1D;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #ffffff;
+            opacity: 0.9;
+        }
+
+        .section {
+            background: rgba(45, 76, 76, 0.3);
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(208, 207, 29, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section h2 {
+            color: #D0CF1D;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .section h3 {
+            color: #D0CF1D;
+            font-size: 1.5em;
+            margin: 20px 0 15px 0;
+            border-bottom: 2px solid #D0CF1D;
+            padding-bottom: 5px;
+        }
+
+        .dashboard-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .dashboard-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .dashboard-image {
+            flex: 1;
+            min-width: 400px;
+            max-width: 500px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-image:hover {
+            transform: scale(1.05);
+        }
+
+        .dashboard-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .criteria-card {
+            background: rgba(29, 29, 46, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(208, 207, 29, 0.3);
+        }
+
+        .criteria-card h4 {
+            color: #D0CF1D;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(29, 29, 46, 0.4);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .parameter-table th,
+        .parameter-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(208, 207, 29, 0.2);
+        }
+
+        .parameter-table th {
+            background: rgba(208, 207, 29, 0.2);
+            color: #D0CF1D;
+            font-weight: bold;
+        }
+
+        .parameter-table tr:hover {
+            background: rgba(208, 207, 29, 0.1);
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .tech-item {
+            background: rgba(208, 207, 29, 0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: #D0CF1D;
+            font-weight: bold;
+            border: 1px solid #D0CF1D;
+            transition: all 0.3s ease;
+        }
+
+        .tech-item:hover {
+            background: #D0CF1D;
+            color: #1D1D2E;
+            transform: translateY(-2px);
+        }
+
+        .best-eleven {
+            background: linear-gradient(135deg, rgba(208, 207, 29, 0.1) 0%, rgba(45, 76, 76, 0.1) 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .methodology-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .step-card {
+            background: rgba(29, 29, 46, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #D0CF1D;
+            position: relative;
+        }
+
+        .step-card::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            top: -10px;
+            left: -15px;
+            background: #D0CF1D;
+            color: #1D1D2E;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .methodology-steps {
+            counter-reset: step-counter;
+        }
+
+        .code-snippet {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #D0CF1D;
+            overflow-x: auto;
+        }
+
+        .highlight {
+            color: #D0CF1D;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 60px;
+            border-top: 1px solid rgba(208, 207, 29, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .dashboard-image {
+                min-width: 300px;
+            }
+            
+            .criteria-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>T20 2021 World Cup Analytics</h1>
+        <p>Building the Ultimate Cricket Dream Team through Data Science</p>
+    </div>
+
+    <div class="container">
+        <!-- Dashboard Section -->
+        <div class="section">
+            <h2>📊 Interactive Dashboard</h2>
+            <div class="dashboard-container">
+                <p>Explore our comprehensive T20 World Cup 2021 analytics dashboard featuring player performance metrics, team analysis, and strategic insights.</p>
+                
+<div class="dashboard-images">
+    <div class="dashboard-image">
+        <img src="./image1.png" alt="Dashboard View 1" />
+    </div>
+    <div class="dashboard-image">
+        <img src="./image2.png" alt="Dashboard View 2" />
+    </div>
+</div>
+
+                <p><strong>🔗 Dashboard Link:</strong> <span class="highlight">[Your Dashboard Link Here]</span></p>
+            </div>
+        </div>
+
+        <!-- Project Overview -->
+        <div class="section">
+            <h2>🎯 Project Overview</h2>
+            <h3>Aim</h3>
+            <p>To identify the best possible XI for T20 cricket using data-driven analysis of the 2021 T20 World Cup tournament. The project aims to create a balanced team capable of both scoring and defending runs effectively.</p>
+            
+            <h3>Key Objectives</h3>
+            <div class="criteria-grid">
+                <div class="criteria-card">
+                    <h4>Scoring Target</h4>
+                    <p>Team should be able to score <span class="highlight">at least 180 runs on average</span></p>
+                </div>
+                <div class="criteria-card">
+                    <h4>Defending Target</h4>
+                    <p>Team should be able to <span class="highlight">defend 150 runs on average</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Selection Parameters -->
+        <div class="section">
+            <h2>📋 Player Selection Parameters</h2>
+            
+            <div class="criteria-grid">
+                <div class="criteria-card">
+                    <h4>🏃‍♂️ Openers</h4>
+                    <ul>
+                        <li><strong>Batting Average:</strong> > 30</li>
+                        <li><strong>Strike Rate:</strong> > 140</li>
+                        <li><strong>Innings Batted:</strong> > 3</li>
+                        <li><strong>Boundary %:</strong> > 50</li>
+                        <li><strong>Batting Position:</strong> < 4</li>
+                    </ul>
+                </div>
+                
+                <div class="criteria-card">
+                    <h4>⚓ Anchors/Middle Order</h4>
+                    <ul>
+                        <li><strong>Batting Average:</strong> > 40</li>
+                        <li><strong>Strike Rate:</strong> > 125</li>
+                        <li><strong>Innings Batted:</strong> > 3</li>
+                        <li><strong>Avg. Balls Faced:</strong> > 20</li>
+                        <li><strong>Batting Position:</strong> > 2</li>
+                    </ul>
+                </div>
+                
+                <div class="criteria-card">
+                    <h4>🏁 Finishers</h4>
+                    <ul>
+                        <li><strong>Batting Average:</strong> > 25</li>
+                        <li><strong>Strike Rate:</strong> > 130</li>
+                        <li><strong>Innings Batted:</strong> > 3</li>
+                        <li><strong>Avg. Balls Faced:</strong> > 12</li>
+                        <li><strong>Batting Position:</strong> > 4</li>
+                    </ul>
+                </div>
+                
+                <div class="criteria-card">
+                    <h4>🎯 All-Rounders</h4>
+                    <ul>
+                        <li><strong>Batting Average:</strong> > 15</li>
+                        <li><strong>Strike Rate:</strong> > 140</li>
+                        <li><strong>Innings Batted:</strong> > 2</li>
+                        <li><strong>Bowling Economy:</strong> < 7</li>
+                        <li><strong>Bowling Strike Rate:</strong> < 20</li>
+                    </ul>
+                </div>
+                
+                <div class="criteria-card">
+                    <h4>🎳 Specialist Fast Bowlers</h4>
+                    <ul>
+                        <li><strong>Innings Bowled:</strong> > 4</li>
+                        <li><strong>Bowling Economy:</strong> < 7</li>
+                        <li><strong>Bowling Strike Rate:</strong> < 16</li>
+                        <li><strong>Bowling Average:</strong> < 20</li>
+                        <li><strong>Dot Ball %:</strong> > 40</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology Stack -->
+        <div class="section">
+            <h2>🛠️ Technology Stack</h2>
+            <div class="tech-stack">
+                <div class="tech-item">Python</div>
+                <div class="tech-item">Pandas</div>
+                <div class="tech-item">JSON</div>
+                <div class="tech-item">Web Scraping</div>
+                <div class="tech-item">Power BI</div>
+                <div class="tech-item">DAX</div>
+                <div class="tech-item">Data Visualization</div>
+            </div>
+        </div>
+
+        <!-- Methodology -->
+        <div class="section">
+            <h2>🔬 Methodology</h2>
+            <div class="methodology-steps">
+                <div class="step-card">
+                    <h4>Data Collection</h4>
+                    <p>Web scraping of T20 World Cup 2021 data including match results, batting summaries, bowling summaries, and player information.</p>
+                </div>
+                
+                <div class="step-card">
+                    <h4>Data Preprocessing</h4>
+                    <p>Cleaning and processing raw JSON data, handling special characters, and standardizing player names.</p>
+                </div>
+                
+                <div class="step-card">
+                    <h4>Feature Engineering</h4>
+                    <p>Creating calculated columns for boundary runs, batting positions, and performance metrics using DAX formulas.</p>
+                </div>
+                
+                <div class="step-card">
+                    <h4>Analysis & Modeling</h4>
+                    <p>Implementing selection criteria for different player roles and analyzing performance metrics.</p>
+                </div>
+                
+                <div class="step-card">
+                    <h4>Dashboard Creation</h4>
+                    <p>Building interactive Power BI dashboard with multiple visualizations and filtering capabilities.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Processing -->
+        <div class="section">
+            <h2>🔄 Data Processing Pipeline</h2>
+            <h3>Libraries Used</h3>
+            <div class="code-snippet">
+                <code>
+import pandas as pd<br>
+import json
+                </code>
+            </div>
+            
+            <h3>Data Sources Processed</h3>
+            <table class="parameter-table">
+                <thead>
+                    <tr>
+                        <th>Data Source</th>
+                        <th>File</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Match Results</td>
+                        <td>t20_wc_match_results.json</td>
+                        <td>Tournament match outcomes and team information</td>
+                    </tr>
+                    <tr>
+                        <td>Batting Summary</td>
+                        <td>t20_wc_batting_summary.json</td>
+                        <td>Individual batting performance metrics</td>
+                    </tr>
+                    <tr>
+                        <td>Bowling Summary</td>
+                        <td>t20_wc_bowling_summary.json</td>
+                        <td>Individual bowling performance metrics</td>
+                    </tr>
+                    <tr>
+                        <td>Player Information</td>
+                        <td>t20_wc_player_info.json</td>
+                        <td>Player profiles and team details</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Key Processing Steps</h3>
+            <div class="code-snippet">
+                <code>
+# Character cleanup for player names<br>
+df_batting['batsmanName'] = df_batting['batsmanName'].apply(lambda x: x.replace('â€', ''))<br>
+df_batting['batsmanName'] = df_batting['batsmanName'].apply(lambda x: x.replace('\xa0', ''))<br><br>
+# Dismissal status processing<br>
+df_batting['out/not_out'] = df_batting.dismissal.apply(lambda x: "out" if len(x)>0 else "not_out")
+                </code>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="section">
+            <h2>📊 Key Performance Metrics</h2>
+            <table class="parameter-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Description</th>
+                        <th>DAX Formula</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Batting Average</td>
+                        <td>Average runs scored in an innings</td>
+                        <td>DIVIDE([Total Runs],[Total Innings Dismissed],0)</td>
+                    </tr>
+                    <tr>
+                        <td>Strike Rate</td>
+                        <td>Runs scored per 100 balls</td>
+                        <td>DIVIDE([Total Runs],[total balls faced],0)*100</td>
+                    </tr>
+                    <tr>
+                        <td>Bowling Economy</td>
+                        <td>Average runs conceded per over</td>
+                        <td>DIVIDE([Runs Conceded],([balls Bowled]/6),0)</td>
+                    </tr>
+                    <tr>
+                        <td>Bowling Strike Rate</td>
+                        <td>Balls bowled per wicket</td>
+                        <td>DIVIDE([balls Bowled],[wickets],0)</td>
+                    </tr>
+                    <tr>
+                        <td>Boundary %</td>
+                        <td>Percentage of runs from boundaries</td>
+                        <td>DIVIDE(SUM([Boundary runs]),[Total Runs],0)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Best XI -->
+        <div class="section">
+            <h2>🏆 Our Best XI</h2>
+            <div class="best-eleven">
+                <h3>Final Team Selection</h3>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Player</th>
+                            <th>Team</th>
+                            <th>Role</th>
+                            <th>Key Strength</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Jos Buttler</td>
+                            <td>England</td>
+                            <td>Wicket-keeper Batsman</td>
+                            <td>Aggressive opener, high strike rate</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Rilee Rossouw</td>
+                            <td>South Africa</td>
+                            <td>Top-order batsman</td>
+                            <td>Consistent scorer, boundary hitter</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Virat Kohli</td>
+                            <td>India</td>
+                            <td>Top-order batsman</td>
+                            <td>Anchor, high batting average</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Suryakumar Yadav</td>
+                            <td>India</td>
+                            <td>Middle-order batsman</td>
+                            <td>360-degree shots, adaptability</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Glenn Phillips</td>
+                            <td>New Zealand</td>
+                            <td>Finisher</td>
+                            <td>Power hitting, finishing ability</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Marcus Stoinis</td>
+                            <td>Australia</td>
+                            <td>All-rounder</td>
+                            <td>Batting depth, medium pace</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Sikandar Raza</td>
+                            <td>Zimbabwe</td>
+                            <td>All-rounder</td>
+                            <td>Spin bowling, lower-order batting</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Rashid Khan</td>
+                            <td>Afghanistan</td>
+                            <td>Spin Bowler</td>
+                            <td>Wicket-taking ability, economy</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>Sam Curran</td>
+                            <td>England</td>
+                            <td>Fast Bowler</td>
+                            <td>Death bowling, left-arm variety</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>Shaheen Shah Afridi</td>
+                            <td>Pakistan</td>
+                            <td>Fast Bowler</td>
+                            <td>Swing bowling, powerplay wickets</td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td>Anrich Nortje</td>
+                            <td>South Africa</td>
+                            <td>Fast Bowler</td>
+                            <td>Express pace, dot ball percentage</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Key Findings -->
+        <div class="section">
+            <h2>🔍 Key Findings</h2>
+            <div class="criteria-grid">
+                <div class="criteria-card">
+                    <h4>Batting Strength</h4>
+                    <p>The selected XI has a <span class="highlight">combined batting average of 39.60</span> and <span class="highlight">strike rate of 154.54</span>, ensuring strong run-scoring capability.</p>
+                </div>
+                
+                <div class="criteria-card">
+                    <h4>Bowling Balance</h4>
+                    <p>The bowling attack maintains an <span class="highlight">economy rate of 6.47</span> and <span class="highlight">bowling average of 14.12</span>, providing excellent defensive capabilities.</p>
+                </div>
+                
+                <div class="criteria-card">
+                    <h4>Team Composition</h4>
+                    <p>Perfect balance with <span class="highlight">3 specialist batsmen, 2 all-rounders, and 3 specialist bowlers</span> plus a wicket-keeper batsman.</p>
+                </div>
+                
+                <div class="criteria-card">
+                    <h4>International Representation</h4>
+                    <p>The team includes players from <span class="highlight">8 different countries</span>, ensuring diverse skill sets and playing styles.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 T20 World Cup Analytics Project | Data-Driven Cricket Team Selection</p>
+    </div>
+</body>
+</html>
